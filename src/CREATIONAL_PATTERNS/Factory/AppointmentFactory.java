@@ -1,4 +1,4 @@
-package CREATIONAL_PATTERNS;
+package CREATIONAL_PATTERNS.Factory;
 
 public class AppointmentFactory {
     public static Appointment createAppointment(Type type){

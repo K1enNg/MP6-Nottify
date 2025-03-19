@@ -1,4 +1,4 @@
-package CREATIONAL_PATTERNS;
+package CREATIONAL_PATTERNS.Factory;
 
 import java.util.Date;
 
