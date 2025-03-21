@@ -9,5 +9,5 @@ public class ScheduleFacade {
         manager.addAppointment(appointment);
         appointment.schedule();
     }
-    
+
 }
