@@ -13,7 +13,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 public class AppointmentGUI extends JFrame {
-    private JComboBox<AppointmentFactory.Type> typeComboBox;
+    private JComboBox<Type> typeComboBox;
     private JTextField dateField, detailsField;
     private JTextArea outputArea;
     private ScheduleFacade facade;
@@ -34,7 +34,7 @@ public class AppointmentGUI extends JFrame {
         formPanel.setBorder(BorderFactory.createTitledBorder("Create Appointment"));
 
         formPanel.add(new JLabel("Appointment Type:"));
-        typeComboBox = new JComboBox<>(AppointmentFactory.Type.values());
+        typeComboBox = new JComboBox<>(Type.values());
         formPanel.add(typeComboBox);
 
         formPanel.add(new JLabel("Date (yyyy-MM-dd HH:mm):"));
@@ -66,23 +66,20 @@ public class AppointmentGUI extends JFrame {
 
     private void bookAppointment() {
         try {
-            AppointmentFactory.Type type = (AppointmentFactory.Type) typeComboBox.getSelectedItem();
+            Type type = (Type) typeComboBox.getSelectedItem();
             String dateStr = dateField.getText();
             String details = detailsField.getText();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date date = sdf.parse(dateStr);
 
-            // Build appointment
-            Appointment appointment = new AppointmentBuilder(type)
-                    .setDate(date)
-                    .setDetails(details)
-                    .build();
+//            Appointment appointment = new AppointmentBuilder(type)
+//                    .setDate(date)
+//                    .setDetails(details)
+//                    .build();
 
-            // Book using Facade
-            facade.bookAppointment(appointment);
+//            facade.bookAppointment(appointment);
 
-            // Notify user
             notifier.notifyUser("Your appointment is confirmed for: " + sdf.format(date));
 
             outputArea.append("Booked " + type + " appointment on " + sdf.format(date) + " with details: " + details + "\n");
@@ -91,3 +88,4 @@ public class AppointmentGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }
+}
