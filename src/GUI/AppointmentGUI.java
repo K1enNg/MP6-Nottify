@@ -4,8 +4,6 @@ import BEHAVIORAL_PATTERNS.Observer.NotificationSystem;
 import BEHAVIORAL_PATTERNS.Observer.User;
 import CREATIONAL_PATTERNS.Builder.AppointmentBuilder;
 import CREATIONAL_PATTERNS.Factory.Appointment;
-import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
-import CREATIONAL_PATTERNS.Factory.Type;
 import STRUCTURAL_PATTERNS.Facade.ScheduleFacade;
 
 import javax.swing.*;
