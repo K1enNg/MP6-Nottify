@@ -23,22 +23,23 @@ public class AppointmentGUI extends JFrame {
         notifier = new NotificationSystem();
         notifier.subscribe(new User("Kien"));
 
-        setTitle("Smart Appointment Scheduler");
+        setTitle("NOTTIFY");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // ===== Form Panel =====
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createTitledBorder("Create Appointment"));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Create appointment"));
 
         formPanel.add(new JLabel("Appointment Type:"));
-        typeComboBox = new JComboBox<>(CREATIONAL_PATTERNS.Factory.Type.values());
+        typeComboBox = new JComboBox<>(new String[]{"InPerson", "Virtual"});
         formPanel.add(typeComboBox);
 
-        formPanel.add(new JLabel("Date (yyyy-MM-dd HH:mm):"));
-        dateField = new JTextField();
-        formPanel.add(dateField);
+        formPanel.add(new JLabel("Date:"));
+        dateChooser = new JDateChooser();
+        dateChooser.setDateFormatString("yyyy-MM-dd HH:mm");
+        formPanel.add(dateChooser);
 
         formPanel.add(new JLabel("Details:"));
         detailsField = new JTextField();
@@ -46,13 +47,8 @@ public class AppointmentGUI extends JFrame {
 
         JButton bookButton = new JButton("Book Appointment");
         formPanel.add(bookButton);
-
-        // Placeholder
         formPanel.add(new JLabel());
-
         add(formPanel, BorderLayout.NORTH);
-
-        // ===== Output Area =====
         outputArea = new JTextArea();
         outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.CENTER);
@@ -69,8 +65,10 @@ public class AppointmentGUI extends JFrame {
             String dateStr = dateField.getText();
             String details = detailsField.getText();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            Date date = sdf.parse(dateStr);
+            if (date == null) {
+                JOptionPane.showMessageDialog(this, "Please select a valid date!");
+                return;
+            }
 
             Appointment appointment = new AppointmentBuilder(type)
                     .setDate(date)
@@ -78,18 +76,11 @@ public class AppointmentGUI extends JFrame {
                     .build();
 
             facade.bookAppointment(appointment);
-
             notifier.notifyUser("Your appointment is confirmed for: " + sdf.format(date));
-
             outputArea.append("Booked " + type + " appointment on " + sdf.format(date) + " with details: " + details + "\n");
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
-    }
-
-    // Main method to launch GUI
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(AppointmentGUI::new);
     }
 }
