@@ -13,6 +13,10 @@ public abstract class Appointment {
     public void cancel() {
         System.out.println("Appointment on : " + date +" is cancelled");
     }
+
     public Date getDate() {return date; }
     public String getDetails() {return details;}
+    public void setDate(Date newDate){
+        this.date = newDate;
+    }
 }
