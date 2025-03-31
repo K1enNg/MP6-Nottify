@@ -10,23 +10,39 @@ public class RoleSelectionPanel extends JPanel {
     private JButton continueButton;
 
     public RoleSelectionPanel() {
-        setLayout(new GridLayout(3, 2, 10, 10));
-        setBorder(BorderFactory.createTitledBorder("User Role Selection"));
+        setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createTitledBorder("Select Your Role"));
+        setBackground(new Color(240, 248, 255)); // Light Blue Background
 
-        add(new JLabel("Enter Your Name:"));
-        nameField = new JTextField();
-        add(nameField);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
-        add(new JLabel("Select Role:"));
+        JLabel logoLabel = new JLabel(new ImageIcon("logo.png")); // Add a logo
+        add(logoLabel, gbc);
+
+        gbc.gridy++;
+        add(new JLabel("Enter Your Name:"), gbc);
+        gbc.gridy++;
+        nameField = new JTextField(15);
+        add(nameField, gbc);
+
+        gbc.gridy++;
+        add(new JLabel("Select Your Role:"), gbc);
+        gbc.gridy++;
         roleComboBox = new JComboBox<>(new String[]{"Patient", "Doctor"});
-        add(roleComboBox);
+        add(roleComboBox, gbc);
 
+        gbc.gridy++;
         continueButton = new JButton("Continue");
-        add(continueButton);
+        continueButton.setBackground(new Color(100, 149, 237)); // Cornflower Blue
+        continueButton.setForeground(Color.WHITE);
+        add(continueButton, gbc);
     }
 
     public String getUserName() {
-        return nameField.getText();
+        return nameField.getText().trim();
     }
 
     public String getSelectedRole() {

@@ -34,7 +34,7 @@ public class AppointmentGUI extends JFrame {
 //        // Initialize components
 //        roleSelectionPanel = new RoleSelectionPanel();
 //        appointmentManagementPanel = new AppointmentManagementPanel();
-//        outputPanel = new OutputPanel();
+        outputPanel = new OutputPanel();
 //
 //        // Add panels to the frame
 //        add(roleSelectionPanel, BorderLayout.NORTH);
