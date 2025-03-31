@@ -1,13 +1,14 @@
 package GUI;
 
 import CREATIONAL_PATTERNS.Factory.Appointment;
+import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
 import CREATIONAL_PATTERNS.Factory.InPersonAppointment;
+import CREATIONAL_PATTERNS.Factory.Type;
 import GUI.AppointmentManagementPanel;
 import GUI.OutputPanel;
 import GUI.RoleSelectionPanel;
 import STRUCTURAL_PATTERNS.Facade.ScheduleFacade;
 import User.*;
-import CREATIONAL_PATTERNS.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,18 +54,19 @@ public class AppointmentGUI extends JFrame {
             String role = roleSelectionPanel.getSelectedRole();
             String dateStr = appointmentManagementPanel.getDateInput();
             String details = appointmentManagementPanel.getDetailsInput();
+            CREATIONAL_PATTERNS.Factory.Type type = appointmentManagementPanel.getSelectedType();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date date = sdf.parse(dateStr);
 
-//            if ("Patient".equals(role)) {
-//                Patient patient = new Patient(name);
-//                Appointment appointment = new Appointment(date, details, patient);
-//                patient.bookAppointment(appointment, facade);
-//                outputPanel.appendMessage("Booked appointment for " + name + " on " + sdf.format(date));
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Only Patients can book appointments.");
-//            }
+            if ("Patient".equals(role)) {
+                Patient patient = new Patient(name);
+                Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
+                patient.bookAppointment(appointment, facade);
+                outputPanel.appendMessage("Booked appointment for " + name + " on " + sdf.format(date));
+            } else {
+                JOptionPane.showMessageDialog(this, "Only Patients can book appointments.");
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }

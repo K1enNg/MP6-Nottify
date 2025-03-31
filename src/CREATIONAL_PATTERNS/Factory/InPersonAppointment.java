@@ -6,7 +6,9 @@ import java.util.Date;
 
 public class InPersonAppointment extends Appointment {
     public InPersonAppointment(Date date, String details, Patient patient){
-        super(date,details,patient);
+        this.date = date;
+        this.details = details;
+        this.patient = patient;
     }
     @Override
     public void schedule() {

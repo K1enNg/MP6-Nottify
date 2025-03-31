@@ -1,9 +1,13 @@
 package GUI;
 
+import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
+import CREATIONAL_PATTERNS.Factory.Type;
+
 import javax.swing.*;
 import java.awt.*;
 public class AppointmentManagementPanel extends JPanel {
     private JTextField dateField, detailsField;
+    private JComboBox<Type> typeJComboBox;
     private JButton bookButton, messageButton, confirmButton, declineButton, rescheduleButton;
 
     public AppointmentManagementPanel() {
@@ -57,5 +61,8 @@ public class AppointmentManagementPanel extends JPanel {
 
     public JButton getRescheduleButton() {
         return rescheduleButton;
+    }
+    public Type getSelectedType(){
+        return (Type) typeJComboBox.getSelectedItem();
     }
 }
