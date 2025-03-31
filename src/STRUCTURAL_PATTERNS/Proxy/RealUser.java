@@ -7,6 +7,6 @@ public class RealUser implements IUser{
     }
     @Override
     public void showDetails() {
-        System.out.println("User: " + name);
+        System.out.println("CREATIONAL_PATTERNS.User: " + name);
     }
 }

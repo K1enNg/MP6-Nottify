@@ -1,4 +1,4 @@
-package User;
+package CREATIONAL_PATTERNS.User;
 
 abstract class User {
     protected String name;

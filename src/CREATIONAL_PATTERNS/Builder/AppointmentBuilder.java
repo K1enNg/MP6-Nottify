@@ -3,7 +3,7 @@ package CREATIONAL_PATTERNS.Builder;
 import CREATIONAL_PATTERNS.Factory.Appointment;
 import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
 import CREATIONAL_PATTERNS.Factory.Type;
-import User.Patient;
+import CREATIONAL_PATTERNS.User.Patient;
 
 import java.util.Date;
 

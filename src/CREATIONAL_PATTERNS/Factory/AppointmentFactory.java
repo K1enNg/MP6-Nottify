@@ -1,6 +1,6 @@
 package CREATIONAL_PATTERNS.Factory;
 
-import User.Patient;
+import CREATIONAL_PATTERNS.User.Patient;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package User;
+package CREATIONAL_PATTERNS.User;
 
 import CREATIONAL_PATTERNS.Factory.Appointment;
 import STRUCTURAL_PATTERNS.Facade.ScheduleFacade;

@@ -1,4 +1,4 @@
-package User;
+package CREATIONAL_PATTERNS.User;
 
 import CREATIONAL_PATTERNS.Factory.Appointment;
 
