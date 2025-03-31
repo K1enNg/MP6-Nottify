@@ -79,9 +79,9 @@ public class AppointmentGUI extends JFrame {
 
         if ("Patient".equals(role)) {
             Patient patient = new Patient(name);
-            Doctor doctor = new Doctor("Dr. Smith");
+            Doctor doctor = new Doctor("Kien");
             patient.sendMessageToDoctor(doctor, message);
-            outputPanel.appendMessage(name + " messaged Dr. Smith: " + message);
+            outputPanel.appendMessage(name + " messaged Dr. "+ doctor.getName()+ ": " + message);
         } else {
             JOptionPane.showMessageDialog(this, "Only Patients can send messages.");
         }

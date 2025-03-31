@@ -8,25 +8,35 @@ import User.Patient;
 import java.util.Date;
 
 public class AppointmentBuilder {
-    private Appointment appointment;
+    private Type type;
+    private Date date;
+    private String details;
+    private Patient patient;
 
-    // Constructor accepts enum Type
-    public AppointmentBuilder(Type type, Date date, String details, Patient patient) {
-        appointment = AppointmentFactory.createAppointment(type, date, details, patient);
+    // Constructor only stores type initially
+    public AppointmentBuilder(Type type) {
+        this.type = type;
     }
 
     public AppointmentBuilder setDate(Date date) {
-        appointment.date = date;
+        this.date = date;
         return this;
     }
 
     public AppointmentBuilder setDetails(String details) {
-        appointment.details = details;
+        this.details = details;
+        return this;
+    }
+
+    public AppointmentBuilder setPatient(Patient patient) {
+        this.patient = patient;
         return this;
     }
 
     public Appointment build() {
-        return appointment;
+        if (type == null || date == null || details == null || patient == null) {
+            throw new IllegalStateException("All fields must be set before building an appointment.");
+        }
+        return AppointmentFactory.createAppointment(type, date, details, patient);
     }
 }
-

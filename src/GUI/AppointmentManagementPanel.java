@@ -5,14 +5,19 @@ import CREATIONAL_PATTERNS.Factory.Type;
 
 import javax.swing.*;
 import java.awt.*;
+
 public class AppointmentManagementPanel extends JPanel {
     private JTextField dateField, detailsField;
     private JComboBox<Type> typeJComboBox;
     private JButton bookButton, messageButton, confirmButton, declineButton, rescheduleButton;
 
     public AppointmentManagementPanel() {
-        setLayout(new GridLayout(5, 2, 10, 10));
+        setLayout(new GridLayout(6, 2, 10, 10)); // Increased rows to fit combo box
         setBorder(BorderFactory.createTitledBorder("Appointment Management"));
+
+        add(new JLabel("Appointment Type:"));
+        typeJComboBox = new JComboBox<>(Type.values());  // ✅ FIXED: Initialized properly
+        add(typeJComboBox);
 
         add(new JLabel("Date (yyyy-MM-dd HH:mm):"));
         dateField = new JTextField();
@@ -43,6 +48,10 @@ public class AppointmentManagementPanel extends JPanel {
         return detailsField.getText();
     }
 
+    public Type getSelectedType() {
+        return (Type) typeJComboBox.getSelectedItem(); // ✅ FIXED: Now `typeJComboBox` is properly initialized
+    }
+
     public JButton getBookButton() {
         return bookButton;
     }
@@ -61,8 +70,5 @@ public class AppointmentManagementPanel extends JPanel {
 
     public JButton getRescheduleButton() {
         return rescheduleButton;
-    }
-    public Type getSelectedType(){
-        return (Type) typeJComboBox.getSelectedItem();
     }
 }
