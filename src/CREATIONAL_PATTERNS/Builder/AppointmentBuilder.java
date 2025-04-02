@@ -3,29 +3,40 @@ package CREATIONAL_PATTERNS.Builder;
 import CREATIONAL_PATTERNS.Factory.Appointment;
 import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
 import CREATIONAL_PATTERNS.Factory.Type;
+import CREATIONAL_PATTERNS.User.Patient;
 
 import java.util.Date;
 
 public class AppointmentBuilder {
-    private Appointment appointment;
+    private Type type;
+    private Date date;
+    private String details;
+    private Patient patient;
 
-    // Constructor accepts enum Type
+    // Constructor only stores type initially
     public AppointmentBuilder(Type type) {
-        appointment = AppointmentFactory.createAppointment(type);
+        this.type = type;
     }
 
     public AppointmentBuilder setDate(Date date) {
-        appointment.date = date;
+        this.date = date;
         return this;
     }
 
     public AppointmentBuilder setDetails(String details) {
-        appointment.details = details;
+        this.details = details;
+        return this;
+    }
+
+    public AppointmentBuilder setPatient(Patient patient) {
+        this.patient = patient;
         return this;
     }
 
     public Appointment build() {
-        return appointment;
+        if (type == null || date == null || details == null || patient == null) {
+            throw new IllegalStateException("All fields must be set before building an appointment.");
+        }
+        return AppointmentFactory.createAppointment(type, date, details, patient);
     }
 }
-

@@ -1,91 +1,237 @@
 package GUI;
 
-import BEHAVIORAL_PATTERNS.Observer.NotificationSystem;
-import BEHAVIORAL_PATTERNS.Observer.User;
-import CREATIONAL_PATTERNS.Builder.AppointmentBuilder;
 import CREATIONAL_PATTERNS.Factory.Appointment;
 import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
-import CREATIONAL_PATTERNS.Factory.Type;
 import STRUCTURAL_PATTERNS.Facade.ScheduleFacade;
+import CREATIONAL_PATTERNS.User.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 public class AppointmentGUI extends JFrame {
-    private JComboBox<Type> typeComboBox;
-    private JTextField dateField, detailsField;
-    private JTextArea outputArea;
+    private RoleSelectionPanel roleSelectionPanel;
+    private AppointmentManagementPanel appointmentManagementPanel;
+    private OutputPanel outputPanel;
     private ScheduleFacade facade;
-    private NotificationSystem notifier;
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+    private String userRole;
+    private String userName;
+    private List<Appointment> appointmentList;
 
     public AppointmentGUI() {
+        appointmentList = new ArrayList<>();
         facade = new ScheduleFacade();
-        notifier = new NotificationSystem();
-        notifier.subscribe(new User("Kien"));
-
-        setTitle("Smart Appointment Scheduler");
-        setSize(500, 400);
+        setTitle("NOTTIFY - Appointment Scheduler");
+        setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // ===== Form Panel =====
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createTitledBorder("Create Appointment"));
+//        // Initialize components
+//        roleSelectionPanel = new RoleSelectionPanel();
+//        appointmentManagementPanel = new AppointmentManagementPanel();
+        outputPanel = new OutputPanel();
+//
+//        // Add panels to the frame
+//        add(roleSelectionPanel, BorderLayout.NORTH);
+//        add(appointmentManagementPanel, BorderLayout.CENTER);
+//        add(outputPanel, BorderLayout.SOUTH);
+//
+//        // Button Actions
+//        appointmentManagementPanel.getBookButton().addActionListener(e -> bookAppointment());
+//        appointmentManagementPanel.getMessageButton().addActionListener(e -> messageDoctor());
+//        appointmentManagementPanel.getConfirmButton().addActionListener(e -> confirmAppointment());
+//        appointmentManagementPanel.getDeclineButton().addActionListener(e -> declineAppointment());
+//        appointmentManagementPanel.getRescheduleButton().addActionListener(e -> rescheduleAppointment());
+//
+//        setVisible(true);
 
-        formPanel.add(new JLabel("Appointment Type:"));
-        typeComboBox = new JComboBox<>(Type.values());
-        formPanel.add(typeComboBox);
+        // Using CardLayout to switch between panels
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
-        formPanel.add(new JLabel("Date (yyyy-MM-dd HH:mm):"));
-        dateField = new JTextField();
-        formPanel.add(dateField);
+        roleSelectionPanel = new RoleSelectionPanel();
+        appointmentManagementPanel = new AppointmentManagementPanel();
 
-        formPanel.add(new JLabel("Details:"));
-        detailsField = new JTextField();
-        formPanel.add(detailsField);
+        mainPanel.add(roleSelectionPanel, "RoleSelection");
+        mainPanel.add(appointmentManagementPanel, "AppointmentManagement");
 
-        JButton bookButton = new JButton("Book Appointment");
-        formPanel.add(bookButton);
+        add(mainPanel, BorderLayout.CENTER);
 
-        // Placeholder
-        formPanel.add(new JLabel());
-
-        add(formPanel, BorderLayout.NORTH);
-
-        // ===== Output Area =====
-        outputArea = new JTextArea();
-        outputArea.setEditable(false);
-        add(new JScrollPane(outputArea), BorderLayout.CENTER);
-
-        // ===== Button Action =====
-        bookButton.addActionListener(e -> bookAppointment());
+        // Add action listener for role selection
+        roleSelectionPanel.addContinueButtonListener(e -> proceedToMainScreen());
 
         setVisible(true);
     }
 
+    private void proceedToMainScreen() {
+        userName = roleSelectionPanel.getUserName();
+        userRole = roleSelectionPanel.getSelectedRole();
+
+        if (userName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter your name.");
+            return;
+        }
+
+        // Hide buttons based on role
+        if ("Patient".equals(userRole)) {
+            appointmentManagementPanel.getConfirmButton().setEnabled(false);
+            appointmentManagementPanel.getDeclineButton().setEnabled(false);
+        } else if ("Doctor".equals(userRole)) {
+            appointmentManagementPanel.getBookButton().setEnabled(false);
+            appointmentManagementPanel.getMessageButton().setEnabled(false);
+        }
+
+        // Switch to appointment management screen
+        cardLayout.show(mainPanel, "AppointmentManagement");
+    }
     private void bookAppointment() {
         try {
-            Type type = (Type) typeComboBox.getSelectedItem();
-            String dateStr = dateField.getText();
-            String details = detailsField.getText();
+            String name = roleSelectionPanel.getUserName();
+            String role = roleSelectionPanel.getSelectedRole();
+            String dateStr = appointmentManagementPanel.getDateInput();
+            String details = appointmentManagementPanel.getDetailsInput();
+            CREATIONAL_PATTERNS.Factory.Type type = appointmentManagementPanel.getSelectedType();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date date = sdf.parse(dateStr);
 
-//            Appointment appointment = new AppointmentBuilder(type)
-//                    .setDate(date)
-//                    .setDetails(details)
-//                    .build();
+            if ("Patient".equals(role)) {
+                Patient patient = new Patient(name);
+                Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
 
-//            facade.bookAppointment(appointment);
+                // Store the appointment in the list
+                appointmentList.add(appointment);
 
-            notifier.notifyUser("Your appointment is confirmed for: " + sdf.format(date));
+                patient.bookAppointment(appointment, facade);
+                outputPanel.appendMessage("📅 " + name + " booked an appointment on " + sdf.format(date));
 
-            outputArea.append("Booked " + type + " appointment on " + sdf.format(date) + " with details: " + details + "\n");
-
+            } else {
+                JOptionPane.showMessageDialog(this, "Only Patients can book appointments.");
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
+    }
+
+    private void messageDoctor() {
+        String name = roleSelectionPanel.getUserName();
+        String role = roleSelectionPanel.getSelectedRole();
+        String message = JOptionPane.showInputDialog("Enter message to doctor:");
+
+        if ("Patient".equals(role)) {
+            Patient patient = new Patient(name);
+            Doctor doctor = new Doctor("Kien");
+            patient.sendMessageToDoctor(doctor, message);
+            outputPanel.appendMessage(name + " messaged Dr. "+ doctor.getName()+ ": " + message);
+        } else {
+            JOptionPane.showMessageDialog(this, "Only Patients can send messages.");
+        }
+    }
+
+    private void confirmAppointment() {
+        String name = roleSelectionPanel.getUserName();
+        String role = roleSelectionPanel.getSelectedRole();
+
+        if (!"Doctor".equals(role)) {
+            JOptionPane.showMessageDialog(this, "Only Doctors can confirm appointments.");
+            return;
+        }
+
+        if (appointmentList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No appointments available to confirm.");
+            return;
+        }
+
+        // Doctor selects which appointment to confirm
+        Appointment appointment = selectAppointment();
+        if (appointment != null) {
+            Doctor doctor = new Doctor(name);
+            doctor.confirmAppointment(appointment);
+            outputPanel.appendMessage("✅ Dr. " + name + " confirmed an appointment for " + appointment.getDetails());
+        }
+    }
+
+    private void declineAppointment() {
+        String name = roleSelectionPanel.getUserName();
+        String role = roleSelectionPanel.getSelectedRole();
+
+        if (!"Doctor".equals(role)) {
+            JOptionPane.showMessageDialog(this, "Only Doctors can decline appointments.");
+            return;
+        }
+
+        if (appointmentList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No appointments available to decline.");
+            return;
+        }
+
+        Appointment appointment = selectAppointment();
+        if (appointment != null) {
+            Doctor doctor = new Doctor(name);
+            doctor.declineAppointment(appointment);
+            appointmentList.remove(appointment); // Remove the declined appointment
+            outputPanel.appendMessage("❌ Dr. " + name + " declined an appointment for " + appointment.getDetails());
+        }
+    }
+
+
+    private void rescheduleAppointment() {
+        try {
+            String name = roleSelectionPanel.getUserName();
+            String role = roleSelectionPanel.getSelectedRole();
+            String dateStr = appointmentManagementPanel.getDateInput();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date newDate = sdf.parse(dateStr);
+
+            if (!"Doctor".equals(role)) {
+                JOptionPane.showMessageDialog(this, "Only Doctors can reschedule appointments.");
+                return;
+            }
+
+            if (appointmentList.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No appointments available to reschedule.");
+                return;
+            }
+
+            Appointment appointment = selectAppointment();
+            if (appointment != null) {
+                Doctor doctor = new Doctor(name);
+                doctor.rescheduleAppointment(appointment, newDate);
+                outputPanel.appendMessage("🔄 Dr. " + name + " rescheduled an appointment to " + sdf.format(newDate));
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+
+
+    private Appointment selectAppointment() {
+        String[] appointmentDetails = new String[appointmentList.size()];
+
+        for (int i = 0; i < appointmentList.size(); i++) {
+            appointmentDetails[i] = "📅 " + appointmentList.get(i).getDate() + " - " + appointmentList.get(i).getDetails();
+        }
+
+        String selectedAppointment = (String) JOptionPane.showInputDialog(
+                this,
+                "Select an appointment:",
+                "Appointment Selection",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                appointmentDetails,
+                appointmentDetails[0]
+        );
+
+        for (Appointment appointment : appointmentList) {
+            if (selectedAppointment.contains(appointment.getDetails())) {
+                return appointment;
+            }
+        }
+        return null;
     }
 }
