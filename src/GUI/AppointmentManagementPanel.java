@@ -1,6 +1,5 @@
 package GUI;
 
-import CREATIONAL_PATTERNS.Factory.AppointmentFactory;
 import CREATIONAL_PATTERNS.Factory.Type;
 
 import javax.swing.*;
@@ -32,16 +31,23 @@ public class AppointmentManagementPanel extends JPanel {
         detailsField = new JTextField(15);
         add(detailsField, gbc);
 
+        // 🟢 Fix: Initialize and add typeJComboBox
+        gbc.gridy++;
+        add(new JLabel("📂 Appointment Type:"), gbc);
+        gbc.gridy++;
+        typeJComboBox = new JComboBox<>(Type.values()); // Initialize with Enum values
+        add(typeJComboBox, gbc);
+
         gbc.gridy++;
         bookButton = new JButton("📌 Book Appointment");
         bookButton.setBackground(new Color(60, 179, 113)); // Green
-        bookButton.setForeground(Color.WHITE);
+        bookButton.setForeground(Color.BLACK);
         add(bookButton, gbc);
 
         gbc.gridy++;
         messageButton = new JButton("📩 Message Doctor");
         messageButton.setBackground(new Color(70, 130, 180)); // Steel Blue
-        messageButton.setForeground(Color.WHITE);
+        messageButton.setForeground(Color.BLACK);
         add(messageButton, gbc);
 
         gbc.gridy++;
