@@ -32,7 +32,7 @@ The system allows patients to book, manage, and receive notifications about thei
 3. **Strategy Pattern** – Implements two appointment scheduling strategies: first-come-first-serve and priority-based.  
 
 ## Use case diagram
-![usecasediagram - Copy drawio](https://github.com/user-attachments/assets/ae49f304-85b9-4665-a2f1-149494d746bc)
+![usecasediagram drawio](https://github.com/user-attachments/assets/22688765-d7ce-458b-bac1-0a6af0ae5f7a)
 
 ## Class diagram
 ![ClassDiagram drawio](https://github.com/user-attachments/assets/01b29102-e207-40cb-b40c-b2bed2f9f4ae)
@@ -72,7 +72,6 @@ The objective is for the patient to easily book a new appointment in an availabl
 
 ### Additional Requirements  
 - The system should allow appointment rescheduling or cancellation. 
-
 
 ## Use Case: Cancel Appointment  
 
