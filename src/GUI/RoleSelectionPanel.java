@@ -12,14 +12,14 @@ public class RoleSelectionPanel extends JPanel {
     public RoleSelectionPanel() {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder("Select Your Role"));
-        setBackground(new Color(240, 248, 255)); // Light Blue Background
+        setBackground(new Color(240, 248, 255));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        JLabel logoLabel = new JLabel(new ImageIcon("logo.png")); // Add a logo
+        JLabel logoLabel = new JLabel(new ImageIcon("logo.png"));
         add(logoLabel, gbc);
 
         gbc.gridy++;
@@ -37,7 +37,7 @@ public class RoleSelectionPanel extends JPanel {
         gbc.gridy++;
         continueButton = new JButton("Continue");
         continueButton.setBackground(new Color(100, 149, 237)); // Cornflower Blue
-        continueButton.setForeground(Color.WHITE);
+        continueButton.setForeground(Color.BLACK);
         add(continueButton, gbc);
     }
 
@@ -51,5 +51,9 @@ public class RoleSelectionPanel extends JPanel {
 
     public void addContinueButtonListener(ActionListener listener) {
         continueButton.addActionListener(listener);
+    }
+
+    public JComboBox<String> getRoleComboBox() {
+        return roleComboBox;
     }
 }
