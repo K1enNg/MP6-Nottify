@@ -1,122 +1,163 @@
 package GUI;
 
-import CREATIONAL_PATTERNS.Factory.Type;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
-public class AppointmentManagementPanel extends JPanel {
-    private JLabel welcomeLabel;
-    private JTextField dateField, detailsField;
-    private JComboBox<Type> typeJComboBox;
-    private JButton bookButton, messageButton, confirmButton, declineButton, rescheduleButton;
+class AppointmentManagementPanel extends JPanel {
+    final private JLabel welcomeLabel;
+    final private JTextField dateField;
+    final private JTextArea detailsArea;
+    final private JComboBox<String> typeComboBox;
+    final private JButton bookButton;
+    final private JButton messageButton;
+    final private JButton confirmButton;
+    final private JButton declineButton;
+    final private JButton rescheduleButton;
 
     public AppointmentManagementPanel() {
-
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createTitledBorder("Manage Your Appointments"));
-        setBackground(new Color(245, 245, 245)); // Light Gray Background
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        welcomeLabel = new JLabel("👋 Welcome!");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        welcomeLabel.setForeground(new Color(70, 70, 70));
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(welcomeLabel, gbc);
-        gbc.gridwidth = 1; // reset for future components
-        gbc.gridy++;
-
-
-        add(new JLabel("📅 Date (yyyy-MM-dd HH:mm):"), gbc);
-        gbc.gridy++;
-        dateField = new JTextField(15);
-        add(dateField, gbc);
-
-        gbc.gridy++;
-        add(new JLabel("📝 Details:"), gbc);
-        gbc.gridy++;
-        detailsField = new JTextField(15);
-        add(detailsField, gbc);
-
-        // 🟢 Fix: Initialize and add typeJComboBox
-        gbc.gridy++;
-        add(new JLabel("📂 Appointment Type:"), gbc);
-        gbc.gridy++;
-        typeJComboBox = new JComboBox<>(Type.values()); // Initialize with Enum values
-        add(typeJComboBox, gbc);
-
-        gbc.gridy++;
-        bookButton = new JButton("📌 Book Appointment");
-        bookButton.setBackground(new Color(60, 179, 113)); // Green
-        bookButton.setForeground(Color.BLACK);
-        add(bookButton, gbc);
-
-        gbc.gridy++;
-        messageButton = new JButton("📩 Message Doctor");
-        messageButton.setBackground(new Color(70, 130, 180)); // Steel Blue
-        messageButton.setForeground(Color.BLACK);
-        add(messageButton, gbc);
-
-        gbc.gridy++;
-        confirmButton = new JButton("✅ Confirm Appointment");
-        confirmButton.setBackground(new Color(46, 139, 87)); // Dark Green
-        confirmButton.setForeground(Color.BLACK);
-        add(confirmButton, gbc);
-
-        gbc.gridy++;
-        declineButton = new JButton("❌ Decline Appointment");
-        declineButton.setBackground(new Color(178, 34, 34)); // Firebrick Red
-        declineButton.setForeground(Color.BLACK);
-        add(declineButton, gbc);
-
-        gbc.gridy++;
-        rescheduleButton = new JButton("🔄 Reschedule Appointment");
-        rescheduleButton.setBackground(new Color(255, 140, 0)); // Dark Orange
-        rescheduleButton.setForeground(Color.BLACK);
-        add(rescheduleButton, gbc);
+        setLayout(new BorderLayout(15, 15));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        // Welcome panel
+        JPanel welcomePanel = new JPanel(new BorderLayout());
+        welcomePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+        welcomePanel.setBackground(new Color(236, 240, 241));
+        
+        welcomeLabel = new JLabel("Welcome!");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        welcomeLabel.setForeground(new Color(41, 128, 185));
+        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        welcomePanel.add(welcomeLabel, BorderLayout.WEST);
+        
+        // Main content panel with input form and action buttons
+        JPanel contentPanel = new JPanel(new BorderLayout(15, 15));
+        
+        // Input panel
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Appointment Information"),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        
+        // Date/time input
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel dateLabel = new JLabel("Date (yyyy-MM-dd HH:mm):");
+        dateField = new JTextField(20);
+        datePanel.add(dateLabel);
+        datePanel.add(dateField);
+        
+        // Appointment type selection
+        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel typeLabel = new JLabel("Appointment Type:");
+        String[] types = {"REGULAR", "URGENT", "FOLLOW_UP"};
+        typeComboBox = new JComboBox<>(types);
+        typePanel.add(typeLabel);
+        typePanel.add(typeComboBox);
+        
+        // Details input
+        JPanel detailsPanel = new JPanel(new BorderLayout());
+        JLabel detailsLabel = new JLabel("Appointment Details:");
+        detailsArea = new JTextArea(5, 30);
+        detailsArea.setLineWrap(true);
+        detailsArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(detailsArea);
+        detailsPanel.add(detailsLabel, BorderLayout.NORTH);
+        detailsPanel.add(scrollPane, BorderLayout.CENTER);
+        
+        inputPanel.add(datePanel);
+        inputPanel.add(Box.createVerticalStrut(10));
+        inputPanel.add(typePanel);
+        inputPanel.add(Box.createVerticalStrut(10));
+        inputPanel.add(detailsPanel);
+        
+        // Action buttons panel
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 5, 10, 0));
+        buttonPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Actions"),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+        
+        // Create styled buttons
+        bookButton = createStyledButton("Book", new Color(46, 204, 113));
+        messageButton = createStyledButton("Message", new Color(52, 152, 219));
+        confirmButton = createStyledButton("Confirm", new Color(155, 89, 182));
+        declineButton = createStyledButton("Decline", new Color(231, 76, 60));
+        rescheduleButton = createStyledButton("Reschedule", new Color(243, 156, 18));
+        
+        buttonPanel.add(bookButton);
+        buttonPanel.add(messageButton);
+        buttonPanel.add(confirmButton);
+        buttonPanel.add(declineButton);
+        buttonPanel.add(rescheduleButton);
+        
+        contentPanel.add(inputPanel, BorderLayout.CENTER);
+        contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        add(welcomePanel, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
     }
-
-    public String getDateInput() {
-        return dateField.getText();
+    
+    private JButton createStyledButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createRaisedBevelBorder());
+        
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(color.brighter());
+            }
+            
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(color);
+            }
+        });
+        
+        return button;
     }
-
-    public String getDetailsInput() {
-        return detailsField.getText();
-    }
-
-    public Type getSelectedType() {
-        return (Type) typeJComboBox.getSelectedItem();
-    }
-
-    public JButton getBookButton() {
-        return bookButton;
-    }
-
-    public JButton getMessageButton() {
-        return messageButton;
-    }
-
-    public JButton getConfirmButton() {
-        return confirmButton;
-    }
-
-    public JButton getDeclineButton() {
-        return declineButton;
-    }
-
-    public JButton getRescheduleButton() {
-        return rescheduleButton;
-    }
-
+    
     public void setWelcomeText(String text) {
         welcomeLabel.setText(text);
     }
-
+    
+    public String getDateInput() {
+        return dateField.getText().trim();
+    }
+    
+    public String getDetailsInput() {
+        return detailsArea.getText().trim();
+    }
+    
+    public CREATIONAL_PATTERNS.Factory.Type getSelectedType() {
+        String selected = (String) typeComboBox.getSelectedItem();
+        return CREATIONAL_PATTERNS.Factory.Type.valueOf(selected);
+    }
+    
+    public void clearInputFields() {
+        dateField.setText("");
+        detailsArea.setText("");
+    }
+    
+    public JButton getBookButton() {
+        return bookButton;
+    }
+    
+    public JButton getMessageButton() {
+        return messageButton;
+    }
+    
+    public JButton getConfirmButton() {
+        return confirmButton;
+    }
+    
+    public JButton getDeclineButton() {
+        return declineButton;
+    }
+    
+    public JButton getRescheduleButton() {
+        return rescheduleButton;
+    }
 }
