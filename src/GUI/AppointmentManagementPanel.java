@@ -6,11 +6,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AppointmentManagementPanel extends JPanel {
+    private JLabel welcomeLabel;
     private JTextField dateField, detailsField;
     private JComboBox<Type> typeJComboBox;
     private JButton bookButton, messageButton, confirmButton, declineButton, rescheduleButton;
 
     public AppointmentManagementPanel() {
+
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder("Manage Your Appointments"));
         setBackground(new Color(245, 245, 245)); // Light Gray Background
@@ -19,6 +21,18 @@ public class AppointmentManagementPanel extends JPanel {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.gridx = 0;
         gbc.gridy = 0;
+
+        welcomeLabel = new JLabel("👋 Welcome!");
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeLabel.setForeground(new Color(70, 70, 70));
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        add(welcomeLabel, gbc);
+        gbc.gridwidth = 1; // reset for future components
+        gbc.gridy++;
+
 
         add(new JLabel("📅 Date (yyyy-MM-dd HH:mm):"), gbc);
         gbc.gridy++;
@@ -100,4 +114,9 @@ public class AppointmentManagementPanel extends JPanel {
     public JButton getRescheduleButton() {
         return rescheduleButton;
     }
+
+    public void setWelcomeText(String text) {
+        welcomeLabel.setText(text);
+    }
+
 }

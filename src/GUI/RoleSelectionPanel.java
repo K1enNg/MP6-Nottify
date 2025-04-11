@@ -52,4 +52,8 @@ public class RoleSelectionPanel extends JPanel {
     public void addContinueButtonListener(ActionListener listener) {
         continueButton.addActionListener(listener);
     }
+
+    public JComboBox<String> getRoleComboBox() {
+        return roleComboBox;
+    }
 }

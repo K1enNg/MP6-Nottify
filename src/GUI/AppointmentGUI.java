@@ -7,6 +7,7 @@ import CREATIONAL_PATTERNS.User.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,7 @@ public class AppointmentGUI extends JFrame {
     private String userRole;
     private String userName;
     private List<Appointment> appointmentList;
+
 
     public AppointmentGUI() {
         appointmentList = new ArrayList<>();
@@ -55,6 +57,26 @@ public class AppointmentGUI extends JFrame {
         roleSelectionPanel.addContinueButtonListener(e -> proceedToMainScreen());
 
         setVisible(true);
+
+        roleSelectionPanel.getRoleComboBox().addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String selectedRole = (String) e.getItem();
+                if ("Doctor".equals(selectedRole)) {
+                    boolean authenticated = authenticateDoctor();
+                    if (authenticated) {
+                        userRole = "Doctor"; // set the global role
+                        appointmentManagementPanel.setWelcomeText("👨‍⚕️ Dr. " + userName);
+                        updateUIForRole(userRole);
+                        cardLayout.show(mainPanel, "AppointmentManagement");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "❌ Authentication failed. Reverting to Patient.");
+                        roleSelectionPanel.getRoleComboBox().setSelectedItem("Patient");
+                    }
+                }
+            }
+        });
+
+
     }
 
     private void proceedToMainScreen() {
@@ -67,18 +89,28 @@ public class AppointmentGUI extends JFrame {
         }
 
         updateUIForRole(userRole);
-
+        appointmentManagementPanel.setWelcomeText("👤 Patient: " + userName);
         cardLayout.show(mainPanel, "AppointmentManagement");
     }
 
     private void updateUIForRole(String role) {
-        boolean isPatient = "Patient".equals(role);
-        appointmentManagementPanel.getBookButton().setVisible(isPatient);
-        appointmentManagementPanel.getMessageButton().setVisible(isPatient);
-        appointmentManagementPanel.getConfirmButton().setVisible(!isPatient);
-        appointmentManagementPanel.getDeclineButton().setVisible(!isPatient);
-        appointmentManagementPanel.getRescheduleButton().setVisible(!isPatient);
+        if ("Doctor".equals(role)) {
+            boolean authenticated = authenticateDoctor();
+            if (!authenticated) {
+                JOptionPane.showMessageDialog(this, "❌ Authentication failed. Returning to role selection.");
+                cardLayout.show(mainPanel, "RoleSelection");
+                return;
+            }
+
+            appointmentManagementPanel.getBookButton().setEnabled(false);
+            appointmentManagementPanel.getMessageButton().setEnabled(false);
+
+        } else if ("Patient".equals(role)) {
+            appointmentManagementPanel.getConfirmButton().setEnabled(false);
+            appointmentManagementPanel.getDeclineButton().setEnabled(false);
+        }
     }
+
 
     private void bookAppointment() {
         try {
@@ -197,4 +229,39 @@ public class AppointmentGUI extends JFrame {
 
         return appointmentList.stream().filter(a -> selectedAppointment.contains(a.getDetails())).findFirst().orElse(null);
     }
+
+    private boolean authenticateDoctor() {
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+
+        Object[] message = {
+                "👨‍⚕️ Username:", usernameField,
+                "🔐 Password:", passwordField
+        };
+
+        int option = JOptionPane.showConfirmDialog(this, message, "Doctor Login", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+
+            List<String[]> dummyDoctors = List.of(
+                    new String[]{"kien", "1234"},
+                    new String[]{"drsmith", "pass"},
+                    new String[]{"drjane", "secure"}
+            );
+
+            for (String[] doc : dummyDoctors) {
+                if (doc[0].equals(username) && doc[1].equals(password)) {
+                    userName = username; // Save the name globally
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+
 }
