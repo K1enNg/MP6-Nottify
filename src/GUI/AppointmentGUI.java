@@ -24,8 +24,8 @@ public class AppointmentGUI extends JFrame {
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 18);
     private static final Font BODY_FONT = new Font("Arial", Font.PLAIN, 14);
 
-    final private RoleSelectionPanel roleSelectionPanel;
-    final private AppointmentManagementPanel appointmentManagementPanel;
+    private RoleSelectionPanel roleSelectionPanel;
+    private AppointmentManagementPanel appointmentManagementPanel;
     private OutputPanel outputPanel;
     private StatusBar statusBar;
     private ScheduleFacade facade;
@@ -34,6 +34,7 @@ public class AppointmentGUI extends JFrame {
     private String userRole;
     private String userName;
     private List<Appointment> appointmentList;
+    private JButton logoutButton;
 
     public AppointmentGUI() {
         appointmentList = new ArrayList<>();
@@ -63,7 +64,7 @@ public class AppointmentGUI extends JFrame {
         UIManager.put("TextField.background", Color.WHITE);
         UIManager.put("TextArea.background", Color.WHITE);
 
-        // Create the header panel
+        // Create the header panel with logout button
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
@@ -110,6 +111,39 @@ public class AppointmentGUI extends JFrame {
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
+        // Create logout button
+        logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 14));
+        logoutButton.setBackground(new Color(231, 76, 60));
+        logoutButton.setForeground(Color.WHITE);
+        logoutButton.setFocusPainted(false);
+        logoutButton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(192, 57, 43), 1),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        logoutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Initially hide the logout button (shown only when logged in)
+        logoutButton.setVisible(false);
+
+        // Add action listener to logout button
+        logoutButton.addActionListener(e -> logout());
+
+        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                logoutButton.setBackground(new Color(231, 76, 60).brighter());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                logoutButton.setBackground(new Color(231, 76, 60));
+            }
+        });
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setOpaque(false);
+        rightPanel.add(logoutButton);
+
+        headerPanel.add(rightPanel, BorderLayout.EAST);
+
         return headerPanel;
     }
 
@@ -142,13 +176,41 @@ public class AppointmentGUI extends JFrame {
         });
     }
 
+
+    private void logout() {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to logout?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Clear user data
+            userName = null;
+            userRole = null;
+
+            // Reset UI elements
+//            roleSelectionPanel.resetFields();
+            appointmentManagementPanel.clearInputFields();
+            logoutButton.setVisible(false);
+
+            // Switch to role selection screen
+            cardLayout.show(mainPanel, "RoleSelection");
+            statusBar.setStatus("Logged out successfully");
+
+            // Optionally clear the output panel
+            // outputPanel.clearLog();
+        }
+    }
+
     private void proceedToMainScreen() {
         userName = roleSelectionPanel.getUserName();
         userRole = roleSelectionPanel.getSelectedRole();
 
         if (userName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "⚠️ Please enter your name.", "Input Required",
-                    JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "⚠️ Please enter your name.", "Input Required", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -159,6 +221,9 @@ public class AppointmentGUI extends JFrame {
         } else {
             appointmentManagementPanel.setWelcomeText("👤 Patient: " + userName);
         }
+
+        // Show the logout button when logged in
+        logoutButton.setVisible(true);
 
         cardLayout.show(mainPanel, "AppointmentManagement");
         statusBar.setStatus("Logged in as " + (userRole.equals("Doctor") ? "Dr. " : "") + userName);
@@ -341,8 +406,7 @@ public class AppointmentGUI extends JFrame {
                 Doctor doctor = new Doctor(userName);
                 doctor.declineAppointment(appointment);
                 appointmentList.remove(appointment);
-                outputPanel
-                        .appendMessage("❌ Dr. " + userName + " declined an appointment: " + appointment.getDetails());
+                outputPanel.appendMessage("❌ Dr. " + userName + " declined an appointment: " + appointment.getDetails());
                 statusBar.setStatus("Appointment declined");
             }
         }
@@ -410,8 +474,7 @@ public class AppointmentGUI extends JFrame {
 
                         Doctor doctor = new Doctor(userName);
                         doctor.rescheduleAppointment(appointment, newDate);
-                        outputPanel.appendMessage("🔄 Dr. " + userName + " rescheduled an appointment to **"
-                                + sdf.format(newDate) + "**.");
+                        outputPanel.appendMessage("🔄 Dr. " + userName + " rescheduled an appointment to **" + sdf.format(newDate) + "**.");
                         statusBar.setStatus("Appointment rescheduled successfully");
 
                         JOptionPane.showMessageDialog(this,
@@ -448,8 +511,7 @@ public class AppointmentGUI extends JFrame {
     }
 
     private Appointment selectAppointment(String title) {
-        if (appointmentList.isEmpty())
-            return null;
+        if (appointmentList.isEmpty()) return null;
 
         JDialog selectionDialog = new JDialog(this, title, true);
         selectionDialog.setLayout(new BorderLayout(10, 10));
@@ -478,7 +540,7 @@ public class AppointmentGUI extends JFrame {
         JButton selectButton = new JButton("Select");
         JButton cancelButton = new JButton("Cancel");
 
-        final Appointment[] selected = { null };
+        final Appointment[] selected = {null};
 
         selectButton.addActionListener(e -> {
             int index = appointmentList.getSelectedIndex();
@@ -553,16 +615,17 @@ public class AppointmentGUI extends JFrame {
         JButton loginButton = new JButton("Login");
         JButton cancelButton = new JButton("Cancel");
 
-        final boolean[] authenticated = { false };
+        final boolean[] authenticated = {false};
 
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
             List<String[]> dummyDoctors = List.of(
-                    new String[] { "kien", "1234" },
-                    new String[] { "drsmith", "pass" },
-                    new String[] { "drjane", "secure" });
+                    new String[]{"kien", "1234"},
+                    new String[]{"drsmith", "pass"},
+                    new String[]{"drjane", "secure"}
+            );
 
             for (String[] doc : dummyDoctors) {
                 if (doc[0].equals(username) && doc[1].equals(password)) {
@@ -657,7 +720,7 @@ public class AppointmentGUI extends JFrame {
 
             gbc.gridx = 1;
             gbc.weightx = 1.0;
-            String[] roles = { "Patient", "Doctor" };
+            String[] roles = {"Patient", "Doctor" };
             roleComboBox = new JComboBox<>(roles);
             roleComboBox.setFont(BODY_FONT);
             formPanel.add(roleComboBox, gbc);

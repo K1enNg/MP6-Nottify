@@ -49,7 +49,7 @@ class AppointmentManagementPanel extends JPanel {
         // Appointment type selection
         JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel typeLabel = new JLabel("Appointment Type:");
-        String[] types = {"REGULAR", "URGENT", "FOLLOW_UP"};
+        String[] types = {"InPerson", "Virtual"};
         typeComboBox = new JComboBox<>(types);
         typePanel.add(typeLabel);
         typePanel.add(typeComboBox);
