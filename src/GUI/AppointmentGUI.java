@@ -148,7 +148,6 @@ public class AppointmentGUI extends JFrame {
     }
 
     private void setupActionListeners() {
-        // Button action listeners
         appointmentManagementPanel.getBookButton().addActionListener(e -> bookAppointment());
         appointmentManagementPanel.getMessageButton().addActionListener(e -> messageDoctor());
         appointmentManagementPanel.getConfirmButton().addActionListener(e -> confirmAppointment());
@@ -156,7 +155,6 @@ public class AppointmentGUI extends JFrame {
         appointmentManagementPanel.getRescheduleButton().addActionListener(e -> rescheduleAppointment());
         roleSelectionPanel.addContinueButtonListener(e -> proceedToMainScreen());
 
-        // Role selection listener
         roleSelectionPanel.getRoleComboBox().addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selectedRole = (String) e.getItem();
@@ -200,8 +198,6 @@ public class AppointmentGUI extends JFrame {
             cardLayout.show(mainPanel, "RoleSelection");
             statusBar.setStatus("Logged out successfully");
 
-            // Optionally clear the output panel
-            // outputPanel.clearLog();
         }
     }
 
@@ -369,6 +365,31 @@ public class AppointmentGUI extends JFrame {
 
         Appointment appointment = selectAppointment("Select an appointment to confirm");
         if (appointment != null) {
+            // Check for scheduling conflicts
+            boolean hasConflict = false;
+            for (Appointment existingAppointment : appointmentList) {
+                // Skip the appointment being confirmed and non-confirmed appointments
+                if (existingAppointment == appointment || !existingAppointment.isConfirmed()) {
+                    continue;
+                }
+
+                // Check if dates match exactly
+                if (existingAppointment.getDate().equals(appointment.getDate())) {
+                    hasConflict = true;
+                    break;
+                }
+            }
+
+            if (hasConflict) {
+                JOptionPane.showMessageDialog(this,
+                        "You already have a confirmed appointment at this time.\n" +
+                                "Please check your availability before confirming.",
+                        "Scheduling Conflict",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // If no conflict found, proceed with confirmation
             Doctor doctor = new Doctor(userName);
             doctor.confirmAppointment(appointment);
             outputPanel.appendMessage("✅ Dr. " + userName + " confirmed an appointment: " + appointment.getDetails());

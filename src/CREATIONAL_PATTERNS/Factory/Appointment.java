@@ -22,4 +22,14 @@ public abstract class Appointment {
     public void setDate(Date newDate){
         this.date = newDate;
     }
+    private boolean confirmed;
+    public Appointment() {
+        this.confirmed = false;
+    }
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 }

@@ -148,7 +148,11 @@ class AppointmentManagementPanel extends JPanel {
     public JButton getMessageButton() {
         return messageButton;
     }
-    
+
+    public JButton getRescheduleButton() {
+        return rescheduleButton;
+    }
+
     public JButton getConfirmButton() {
         return confirmButton;
     }
@@ -157,7 +161,4 @@ class AppointmentManagementPanel extends JPanel {
         return declineButton;
     }
     
-    public JButton getRescheduleButton() {
-        return rescheduleButton;
-    }
 }
