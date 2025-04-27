@@ -8,6 +8,7 @@ class AppointmentManagementPanel extends JPanel {
     final private JTextField dateField;
     final private JTextArea detailsArea;
     final private JComboBox<String> typeComboBox;
+    final private JComboBox<String> doctorComboBox;
     final private JButton bookButton;
     final private JButton messageButton;
     final private JButton confirmButton;
@@ -54,6 +55,13 @@ class AppointmentManagementPanel extends JPanel {
         typePanel.add(typeLabel);
         typePanel.add(typeComboBox);
         
+        // Doctor selection
+        JPanel doctorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel doctorLabel = new JLabel("Select Doctor:");
+        doctorComboBox = new JComboBox<>(new String[]{"Dr. Kien", "Dr. Smith", "Dr. Jane"});
+        doctorPanel.add(doctorLabel);
+        doctorPanel.add(doctorComboBox);
+        
         // Details input
         JPanel detailsPanel = new JPanel(new BorderLayout());
         JLabel detailsLabel = new JLabel("Appointment Details:");
@@ -67,6 +75,8 @@ class AppointmentManagementPanel extends JPanel {
         inputPanel.add(datePanel);
         inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(typePanel);
+        inputPanel.add(Box.createVerticalStrut(10));
+        inputPanel.add(doctorPanel);
         inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(detailsPanel);
         
@@ -139,6 +149,7 @@ class AppointmentManagementPanel extends JPanel {
     public void clearInputFields() {
         dateField.setText("");
         detailsArea.setText("");
+        doctorComboBox.setSelectedIndex(0);
     }
     
     public JButton getBookButton() {
@@ -161,4 +172,7 @@ class AppointmentManagementPanel extends JPanel {
         return declineButton;
     }
     
+    public String getSelectedDoctor() {
+        return (String) doctorComboBox.getSelectedItem();
+    }
 }
