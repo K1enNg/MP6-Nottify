@@ -222,19 +222,13 @@ public class AppointmentGUI extends JFrame {
                 cardLayout.show(mainPanel, "RoleSelection");
                 return;
             }
-
-            appointmentManagementPanel.getBookButton().setEnabled(false);
-            appointmentManagementPanel.getMessageButton().setEnabled(false);
-            appointmentManagementPanel.getConfirmButton().setEnabled(true);
-            appointmentManagementPanel.getDeclineButton().setEnabled(true);
-            appointmentManagementPanel.getRescheduleButton().setEnabled(true);
-
+            appointmentManagementPanel.showDoctorView();
+            logoutButton.setVisible(true);
+            filterAppointmentsForDoctor(userName);
         } else if ("Patient".equals(role)) {
-            appointmentManagementPanel.getBookButton().setEnabled(true);
-            appointmentManagementPanel.getMessageButton().setEnabled(true);
-            appointmentManagementPanel.getConfirmButton().setEnabled(false);
-            appointmentManagementPanel.getDeclineButton().setEnabled(false);
-            appointmentManagementPanel.getRescheduleButton().setEnabled(false);
+            appointmentManagementPanel.showPatientView();
+            logoutButton.setVisible(true);
+            showAllAppointmentsForPatient();
         }
     }
 
@@ -256,15 +250,15 @@ public class AppointmentGUI extends JFrame {
 
             if ("Patient".equals(userRole)) {
                 Patient patient = new Patient(userName);
-                Appointment appointment = AppointmentFactory.createAppointment(type, date, details + "\nAssigned to: " + selectedDoctor, patient);
-                appointmentList.add(appointment);
+                Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
+                appointment.setDoctorName(selectedDoctor);
 
-                patient.bookAppointment(appointment, facade);
-                outputPanel.appendMessage(userName + " booked an appointment with " + selectedDoctor + " on **" + sdf.format(date) + "**.");
+                appointmentList.add(appointment);
+                outputPanel.appendMessage("Appointment booked for Dr. " + selectedDoctor + " on " + dateStr);
                 statusBar.setStatus("Appointment booked successfully");
 
                 JOptionPane.showMessageDialog(this,
-                        "Appointment successfully booked with " + selectedDoctor + " for " + sdf.format(date),
+                        "Appointment booked successfully!\nAssigned to Dr. " + selectedDoctor,
                         "Booking Confirmed",
                         JOptionPane.INFORMATION_MESSAGE);
 
@@ -680,6 +674,25 @@ public class AppointmentGUI extends JFrame {
         loginDialog.setVisible(true);
 
         return authenticated[0];
+    }
+
+    private void filterAppointmentsForDoctor(String doctorName) {
+        // Remove appointments not assigned to this doctor
+        List<Appointment> filtered = new ArrayList<>();
+        for (Appointment appt : appointmentList) {
+            if (doctorName.equals(appt.getDoctorName())) {
+                filtered.add(appt);
+            }
+        }
+        appointmentList.clear();
+        appointmentList.addAll(filtered);
+        outputPanel.appendMessage("Showing appointments for Dr. " + doctorName);
+    }
+
+    private void showAllAppointmentsForPatient() {
+        // Optionally, reload all appointments for patient (if you have persistent storage)
+        // For now, do nothing (patients see all appointments they booked in this session)
+        outputPanel.appendMessage("Showing all appointments for patient");
     }
 
     class RoleSelectionPanel extends JPanel {

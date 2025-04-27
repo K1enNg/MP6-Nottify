@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 class AppointmentManagementPanel extends JPanel {
     final private JLabel welcomeLabel;
@@ -19,7 +20,6 @@ class AppointmentManagementPanel extends JPanel {
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Welcome panel
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         welcomePanel.setBackground(new Color(236, 240, 241));
@@ -30,10 +30,8 @@ class AppointmentManagementPanel extends JPanel {
         welcomeLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         welcomePanel.add(welcomeLabel, BorderLayout.WEST);
         
-        // Main content panel with input form and action buttons
         JPanel contentPanel = new JPanel(new BorderLayout(15, 15));
         
-        // Input panel
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
         inputPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -86,7 +84,6 @@ class AppointmentManagementPanel extends JPanel {
                 BorderFactory.createTitledBorder("Actions"),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         
-        // Create styled buttons
         bookButton = createStyledButton("Book", new Color(46, 204, 113));
         messageButton = createStyledButton("Message", new Color(52, 152, 219));
         confirmButton = createStyledButton("Confirm", new Color(155, 89, 182));
@@ -109,13 +106,12 @@ class AppointmentManagementPanel extends JPanel {
     private JButton createStyledButton(String text, Color color) {
         JButton button = new JButton(text);
         button.setBackground(color);
-        button.setForeground(Color.WHITE);
+        button.setForeground(Color.BLACK);
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createRaisedBevelBorder());
         
-        // Add hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(color.brighter());
@@ -152,6 +148,10 @@ class AppointmentManagementPanel extends JPanel {
         doctorComboBox.setSelectedIndex(0);
     }
     
+    public String getSelectedDoctor() {
+        return (String) doctorComboBox.getSelectedItem();
+    }
+    
     public JButton getBookButton() {
         return bookButton;
     }
@@ -172,7 +172,19 @@ class AppointmentManagementPanel extends JPanel {
         return declineButton;
     }
     
-    public String getSelectedDoctor() {
-        return (String) doctorComboBox.getSelectedItem();
+    public void showPatientView() {
+        bookButton.setVisible(true);
+        messageButton.setVisible(true);
+        confirmButton.setVisible(false);
+        declineButton.setVisible(false);
+        rescheduleButton.setVisible(false);
+    }
+    
+    public void showDoctorView() {
+        bookButton.setVisible(false);
+        messageButton.setVisible(false);
+        confirmButton.setVisible(true);
+        declineButton.setVisible(true);
+        rescheduleButton.setVisible(true);
     }
 }
