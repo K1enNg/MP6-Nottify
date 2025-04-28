@@ -10,6 +10,7 @@ public class Doctor extends User{
     }
 
     public void confirmAppointment(Appointment appointment) {
+        appointment.setConfirmed(true);
         System.out.println("Dr. " + name + " confirmed the appointment on " + appointment.getDate());
     }
 
