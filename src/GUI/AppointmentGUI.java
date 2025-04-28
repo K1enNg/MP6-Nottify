@@ -222,10 +222,14 @@ public class AppointmentGUI extends JFrame {
                 cardLayout.show(mainPanel, "RoleSelection");
                 return;
             }
+            // Always refresh appointmentList from the singleton manager
+            appointmentList = new ArrayList<>(CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().getAppointments());
             appointmentManagementPanel.showDoctorView();
             logoutButton.setVisible(true);
             filterAppointmentsForDoctor(userName);
         } else if ("Patient".equals(role)) {
+            // Always refresh appointmentList from the singleton manager
+            appointmentList = new ArrayList<>(CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().getAppointments());
             appointmentManagementPanel.showPatientView();
             logoutButton.setVisible(true);
             showAllAppointmentsForPatient();
@@ -251,14 +255,18 @@ public class AppointmentGUI extends JFrame {
             if ("Patient".equals(userRole)) {
                 Patient patient = new Patient(userName);
                 Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
-                appointment.setDoctorName(selectedDoctor);
+                // Store doctor name without "Dr. " prefix for consistency
+                String doctorBaseName = selectedDoctor.startsWith("Dr. ") ? selectedDoctor.substring(4) : selectedDoctor;
+                appointment.setDoctorName(doctorBaseName);
 
                 appointmentList.add(appointment);
-                outputPanel.appendMessage("Appointment booked for Dr. " + selectedDoctor + " on " + dateStr);
+                // Add the new appointment to the global singleton manager
+                CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().addAppointment(appointment);
+                outputPanel.appendMessage("Appointment booked for Dr. " + doctorBaseName + " on " + dateStr);
                 statusBar.setStatus("Appointment booked successfully");
 
                 JOptionPane.showMessageDialog(this,
-                        "Appointment booked successfully!\nAssigned to Dr. " + selectedDoctor,
+                        "Appointment booked successfully!\nAssigned to Dr. " + doctorBaseName,
                         "Booking Confirmed",
                         JOptionPane.INFORMATION_MESSAGE);
 
