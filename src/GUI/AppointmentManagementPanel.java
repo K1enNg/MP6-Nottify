@@ -86,15 +86,15 @@ class AppointmentManagementPanel extends JPanel {
         
         bookButton = createStyledButton("Book", new Color(46, 204, 113));
         messageButton = createStyledButton("Message", new Color(52, 152, 219));
+        rescheduleButton = createStyledButton("Reschedule", new Color(243, 156, 18));
         confirmButton = createStyledButton("Confirm", new Color(155, 89, 182));
         declineButton = createStyledButton("Decline", new Color(231, 76, 60));
-        rescheduleButton = createStyledButton("Reschedule", new Color(243, 156, 18));
         
         buttonPanel.add(bookButton);
         buttonPanel.add(messageButton);
+        buttonPanel.add(rescheduleButton);
         buttonPanel.add(confirmButton);
         buttonPanel.add(declineButton);
-        buttonPanel.add(rescheduleButton);
         
         contentPanel.add(inputPanel, BorderLayout.CENTER);
         contentPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -177,7 +177,7 @@ class AppointmentManagementPanel extends JPanel {
         messageButton.setVisible(true);
         confirmButton.setVisible(false);
         declineButton.setVisible(false);
-        rescheduleButton.setVisible(false);
+        rescheduleButton.setVisible(true);
     }
     
     public void showDoctorView() {
@@ -185,6 +185,6 @@ class AppointmentManagementPanel extends JPanel {
         messageButton.setVisible(false);
         confirmButton.setVisible(true);
         declineButton.setVisible(true);
-        rescheduleButton.setVisible(true);
+        rescheduleButton.setVisible(false);
     }
 }

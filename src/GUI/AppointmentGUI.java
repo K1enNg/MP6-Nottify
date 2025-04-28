@@ -255,12 +255,10 @@ public class AppointmentGUI extends JFrame {
             if ("Patient".equals(userRole)) {
                 Patient patient = new Patient(userName);
                 Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
-                // Store doctor name without "Dr. " prefix for consistency
                 String doctorBaseName = selectedDoctor.startsWith("Dr. ") ? selectedDoctor.substring(4) : selectedDoctor;
                 appointment.setDoctorName(doctorBaseName);
 
                 appointmentList.add(appointment);
-                // Add the new appointment to the global singleton manager
                 CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().addAppointment(appointment);
                 outputPanel.appendMessage("Appointment booked for Dr. " + doctorBaseName + " on " + dateStr);
                 statusBar.setStatus("Appointment booked successfully");
@@ -439,8 +437,8 @@ public class AppointmentGUI extends JFrame {
     }
 
     private void rescheduleAppointment() {
-        if (!"Doctor".equals(userRole)) {
-            JOptionPane.showMessageDialog(this, "Only Doctors can reschedule appointments.",
+        if (!"Patient".equals(userRole)) {
+            JOptionPane.showMessageDialog(this, "Only Patients can reschedule appointments.",
                     "Access Denied", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -497,9 +495,9 @@ public class AppointmentGUI extends JFrame {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                         Date newDate = sdf.parse(dateStr);
 
-                        Doctor doctor = new Doctor(userName);
+                        Doctor doctor = new Doctor("Kien");
                         doctor.rescheduleAppointment(appointment, newDate);
-                        outputPanel.appendMessage("Dr. " + userName + " rescheduled an appointment to **" + sdf.format(newDate) + "**.");
+                        outputPanel.appendMessage("Dr. " + doctor.getName() + " rescheduled an appointment to **" + sdf.format(newDate) + "**.");
                         statusBar.setStatus("Appointment rescheduled successfully");
 
                         JOptionPane.showMessageDialog(this,
