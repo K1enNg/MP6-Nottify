@@ -222,10 +222,14 @@ public class AppointmentGUI extends JFrame {
                 cardLayout.show(mainPanel, "RoleSelection");
                 return;
             }
+            // Always refresh appointmentList from the singleton manager
+            appointmentList = new ArrayList<>(CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().getAppointments());
             appointmentManagementPanel.showDoctorView();
             logoutButton.setVisible(true);
             filterAppointmentsForDoctor(userName);
         } else if ("Patient".equals(role)) {
+            // Always refresh appointmentList from the singleton manager
+            appointmentList = new ArrayList<>(CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().getAppointments());
             appointmentManagementPanel.showPatientView();
             logoutButton.setVisible(true);
             showAllAppointmentsForPatient();
@@ -251,14 +255,16 @@ public class AppointmentGUI extends JFrame {
             if ("Patient".equals(userRole)) {
                 Patient patient = new Patient(userName);
                 Appointment appointment = AppointmentFactory.createAppointment(type, date, details, patient);
-                appointment.setDoctorName(selectedDoctor);
+                String doctorBaseName = selectedDoctor.startsWith("Dr. ") ? selectedDoctor.substring(4) : selectedDoctor;
+                appointment.setDoctorName(doctorBaseName);
 
                 appointmentList.add(appointment);
-                outputPanel.appendMessage("Appointment booked for Dr. " + selectedDoctor + " on " + dateStr);
+                CREATIONAL_PATTERNS.Singleton.AppointmentManager.getInstance().addAppointment(appointment);
+                outputPanel.appendMessage("Appointment booked for Dr. " + doctorBaseName + " on " + dateStr);
                 statusBar.setStatus("Appointment booked successfully");
 
                 JOptionPane.showMessageDialog(this,
-                        "Appointment booked successfully!\nAssigned to Dr. " + selectedDoctor,
+                        "Appointment booked successfully!\nAssigned to Dr. " + doctorBaseName,
                         "Booking Confirmed",
                         JOptionPane.INFORMATION_MESSAGE);
 
@@ -431,8 +437,8 @@ public class AppointmentGUI extends JFrame {
     }
 
     private void rescheduleAppointment() {
-        if (!"Doctor".equals(userRole)) {
-            JOptionPane.showMessageDialog(this, "Only Doctors can reschedule appointments.",
+        if (!"Patient".equals(userRole)) {
+            JOptionPane.showMessageDialog(this, "Only Patients can reschedule appointments.",
                     "Access Denied", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -489,9 +495,9 @@ public class AppointmentGUI extends JFrame {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                         Date newDate = sdf.parse(dateStr);
 
-                        Doctor doctor = new Doctor(userName);
+                        Doctor doctor = new Doctor("Kien");
                         doctor.rescheduleAppointment(appointment, newDate);
-                        outputPanel.appendMessage("Dr. " + userName + " rescheduled an appointment to **" + sdf.format(newDate) + "**.");
+                        outputPanel.appendMessage("Dr. " + doctor.getName() + " rescheduled an appointment to **" + sdf.format(newDate) + "**.");
                         statusBar.setStatus("Appointment rescheduled successfully");
 
                         JOptionPane.showMessageDialog(this,
